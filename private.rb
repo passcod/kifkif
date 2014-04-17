@@ -5,6 +5,8 @@ class Kifkif::Private < Sinatra::Base
     use Rack::Auth::Basic do |user, pass|
       user == Kifkif.config.user && pass == Kifkif.config.pass
     end
+
+    IO.write 'public/highlight.css', Rouge::Themes::Github.render(scope: '[class^="language-"]')
   end
 
   helpers do
@@ -12,19 +14,11 @@ class Kifkif::Private < Sinatra::Base
       formatter = Rouge::Formatters::HTML.new css_class: css_class
       formatter.format(lexer.lex(source))
     end
-
-    def css
-      Rouge::Themes::Github.render scope: '[class^="language-"]'
-    end
   end
 
   get '/' do
     haml :diffs, locals: {diffs: Diff.all}
   end
 
-  get '/highlight.css' do
-    css
-  end
-
-  memoize :css, :highlight
+  memoize :highlight
 end

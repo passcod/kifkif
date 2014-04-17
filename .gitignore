@@ -1,3 +1,4 @@
 .env
 .*.sw*
 test.db
+public/highlight.css
