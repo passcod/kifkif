@@ -11,13 +11,30 @@ module Kifkif
       return c
     end
 
+    def db
+      begin
+        Sequel.connect ENV['DATABASE_URL']
+      rescue
+        Sequel.connect 'sqlite://test.db'
+      end
+    end
+
     def root
       __dir__
     end
 
-    memoize :config, :root
+    memoize :config, :db, :root
   end
 end
 
-require './web'
-run Kifkif::Web
+Kifkif.db # init
+
+require './models'
+require './private'
+require './public'
+
+map '/pub' do
+  run Kifkif::Public
+end
+
+run Kifkif::Private
