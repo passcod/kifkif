@@ -9,13 +9,20 @@ class Kifkif::Public < Sinatra::Base
     request.body.rewind
     contents = request.body.read
     content_type 'text/plain'
+
+    halt 400, 'Empty request' if contents.nil? or contents == ''
+
     begin
       diff = UnifiedDiff.parse contents
-      if Diff.create({status: 'new',
-        filename: diff.original_file,
-        contents: contents,
-        date_received: DateTime.now
-      })
+      row = Diff.new
+      row.status = 'new'
+      row.date_received = DateTime.now
+      row.contents = contents
+
+      halt 400, 'Need original filename' if diff.original_file.nil?
+      row.filename = diff.original_file
+
+      if row.save
         [200, 'Got it']
       else
         ['500', 'DB error']
