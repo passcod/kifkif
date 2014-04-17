@@ -1,0 +1,10 @@
+%link{rel: 'stylesheet', href: '/highlight.css'}
+%h1 All diffs
+%hr
+
+- diffs.each do |diff|
+  %article
+    %header
+      %h1= diff.filename
+      %time{datetime: diff.date_received.iso8601}= diff.date_received.rfc2822
+    %code= highlight diff.contents
