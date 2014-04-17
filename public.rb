@@ -11,12 +11,11 @@ class Kifkif::Public < Sinatra::Base
     content_type 'text/plain'
     begin
       diff = UnifiedDiff.parse contents
-      if Diff.create do |d|
-        d.filename = diff.original_file
-        d.contents = contents
-        d.date_received = DateTime.now
-        d.status = 'new'
-      end
+      if Diff.create({status: 'new',
+        filename: diff.original_file,
+        contents: contents,
+        date_received: DateTime.now
+      })
         [200, 'Got it']
       else
         ['500', 'DB error']
