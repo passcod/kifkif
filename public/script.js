@@ -1,0 +1,2 @@
+domready(function() {
+});
